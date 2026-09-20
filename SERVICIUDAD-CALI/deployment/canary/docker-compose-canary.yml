@@ -1,19 +1,22 @@
-version: '3.8'
-
 services:
   # ==========================================
   # VERSIÓN ESTABLE (STABLE/PRODUCTION)
   # ==========================================
   serviciudad-stable:
     image: serviciudad:${STABLE_VERSION:-1.0.0}
-    container_name: serviciudad-stable-${STABLE_VERSION:-1.0.0}
+    # container_name: serviciudad-stable-${STABLE_VERSION:-1.0.0}  # Removed due to replicas
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SERVER_PORT=8080
       - VERSION_TAG=stable-${STABLE_VERSION:-1.0.0}
       - DEPLOYMENT_TYPE=stable
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=serviciudad
+      - POSTGRES_USER=serviciudad_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-secret123}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -42,15 +45,20 @@ services:
   # ==========================================
   serviciudad-canary:
     image: serviciudad:${CANARY_VERSION:-2.0.0}
-    container_name: serviciudad-canary-${CANARY_VERSION:-2.0.0}
+    # container_name: serviciudad-canary-${CANARY_VERSION:-2.0.0}  # Removed due to replicas
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SERVER_PORT=8080
       - VERSION_TAG=canary-${CANARY_VERSION:-2.0.0}
       - DEPLOYMENT_TYPE=canary
       - CANARY_ENABLED=true
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=serviciudad
+      - POSTGRES_USER=serviciudad_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-secret123}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
       interval: 15s  # Más frecuente para canary
       timeout: 5s
       retries: 3

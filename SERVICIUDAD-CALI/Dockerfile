@@ -22,6 +22,9 @@ LABEL version="1.0.0"
 WORKDIR /app
 
 RUN addgroup -S spring && adduser -S spring -G spring
+
+RUN mkdir -p logs && chown -R spring:spring logs
+
 USER spring:spring
 
 COPY --from=builder /app/target/*.jar app.jar

@@ -47,16 +47,16 @@ jobs:
       - name: "Build, Test and Verify with Coverage (LINE 85%, BRANCH 81%)"
         working-directory: ./SERVICIUDAD-CALI
         run: |
-          echo "🏗️ Building and running all tests with JaCoCo coverage..."
+          echo "Building and running all tests with JaCoCo coverage..."
           mvn clean verify jacoco:report
-          echo "✅ Build, tests and coverage verification (85% LINE, 81% BRANCH) completed"
+          echo "Build, tests and coverage verification (85% LINE, 81% BRANCH) completed"
 
       - name: Display Coverage Summary
         working-directory: ./SERVICIUDAD-CALI
         run: |
-          echo "📊 Coverage Summary:"
-          echo "✅ Minimum required: 85% LINE coverage"
-          echo "✅ Minimum required: 81% BRANCH coverage"
+          echo "Coverage Summary:"
+          echo "Minimum required: 85% LINE coverage"
+          echo "Minimum required: 81% BRANCH coverage"
           echo "See detailed report in artifacts"
 
       - name: Upload coverage to Codecov

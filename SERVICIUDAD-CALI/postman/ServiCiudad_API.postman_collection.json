@@ -1,10 +1,10 @@
 {
   "info": {
     "name": "ServiCiudad Cali API",
-    "description": "Colección completa de endpoints para ServiCiudad Cali - Sistema de Consulta Unificada de Servicios Públicos\n\n✅ ENDPOINTS PRINCIPALES FUNCIONANDO (100%)\n- Deuda Consolidada: /api/deuda/cliente/{id}\n- Facturas por Cliente: /api/facturas/cliente/{id}\n- Consumos por Cliente: /api/consumos-energia/cliente/{id}\n- Health Check: /actuator/health\n\n🔧 CONFIGURACIÓN:\n- Base URL: http://localhost:8080\n- Autenticación: HTTP Basic (admin:admin123)\n- Cliente de prueba: 1001234567 (con datos reales)\n\n📊 ARQUITECTURA:\n- Arquitectura Hexagonal implementada\n- 5 patrones de diseño aplicados\n- Docker + PostgreSQL operativo",
+    "description": "Colección completa de endpoints para ServiCiudad Cali - Sistema de Consulta Unificada de Servicios Públicos\n\n✅ ENDPOINTS PRINCIPALES FUNCIONANDO (100%)\n- Deuda Consolidada: /api/deuda/cliente/{id}\n- Facturas por Cliente: /api/facturas/cliente/{id}\n- Consumos por Cliente: /api/consumos-energia/cliente/{id}\n- Health Check: /actuator/health\n\n🔧 CONFIGURACIÓN:\n- Base URL: http://localhost (puerto 80 via NGINX Load Balancer)\n- Autenticación: HTTP Basic (admin:admin123)\n- Cliente de prueba: 1001234567 (con datos reales)\n- Despliegue: Canary (10% canary v2.0.0, 90% stable v1.0.0)\n\n📊 ARQUITECTURA:\n- Arquitectura Hexagonal implementada\n- 5 patrones de diseño aplicados\n- Docker + PostgreSQL + NGINX + Prometheus + Grafana operativo\n- Canary Deployment con monitoreo completo",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "serviciudad-cali",
-    "version": "2.0.0"
+    "version": "2.0.0-canary"
   },
   "auth": {
     "type": "basic",
@@ -24,7 +24,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8080",
+      "value": "http://localhost",
       "type": "string"
     },
     {
@@ -60,7 +60,7 @@
       "item": [
         {
           "name": "01 - Deuda Consolidada (PRINCIPAL)",
-          "description": "Endpoint principal para consultar deuda consolidada de un cliente\n\n✅ FUNCIONANDO - 200 OK\n📊 Retorna: deuda total, facturas, consumos, estadísticas\n🔧 Autenticación: HTTP Basic requerida",
+          "description": "Endpoint principal para consultar deuda consolidada de un cliente\n\n✅ FUNCIONANDO - 200 OK\n📊 Retorna: deuda total, facturas, consumos, estadísticas\n🔧 Autenticación: HTTP Basic requerida\n🔄 Canary: Verifica header X-Deployment-Version (canary-2.0.0 o stable-1.0.0)",
           "event": [
             {
               "listen": "test",
@@ -88,6 +88,10 @@
                   "pm.test(\"Response has consumosEnergia\", function () {",
                   "    var jsonData = pm.response.json();",
                   "    pm.expect(jsonData.consumosEnergia).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Has deployment version header\", function () {",
+                  "    pm.expect(pm.response.headers.get('X-Deployment-Version')).to.be.oneOf(['canary-2.0.0', 'stable-1.0.0']);",
                   "});"
                 ],
                 "type": "text/javascript"
